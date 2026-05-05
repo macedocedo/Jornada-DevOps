@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="noise"></div>
+
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <div>
+          <div class="logo-title">DevOps</div>
+          <div class="logo-sub">Roadmap</div>
+        </div>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-numbers">
+          <span id="done-count">0</span>
+          <span class="sep">/</span>
+          <span id="total-count">0</span>
+        </div>
+        <div class="progress-label">tópicos concluídos</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-pct" id="progress-pct">0%</div>
+      </div>
+
+      <div class="search-wrap">
+        <input type="text" id="search" placeholder="buscar tópico..." class="search-input" autocomplete="off">
+        <span class="search-icon">⌕</span>
+      </div>
+    </div>
+
+    <nav class="nav-sections" id="nav-sections"></nav>
+
+    <div class="filter-block">
+      <div class="filter-label">nível</div>
+      <div class="filter-pills">
+        <button class="pill active" data-filter="all">todos</button>
+        <button class="pill" data-filter="base">fundamentos</button>
+        <button class="pill" data-filter="mid">intermediário</button>
+        <button class="pill" data-filter="adv">avançado</button>
+      </div>
+      <div class="filter-label" style="margin-top:12px">status</div>
+      <div class="filter-pills">
+        <button class="pill" data-filter="done">concluídos</button>
+        <button class="pill" data-filter="todo">pendentes</button>
+      </div>
+    </div>
+
+    <button class="reset-btn" id="reset-btn">↺ limpar progresso</button>
+  </aside>
+
+  <main class="main">
+    <header class="hero">
+      <div class="hero-tag">guia de estudo</div>
+      <h1 class="hero-title">Jornada <em> DevOps</em></h1>
+      <p class="hero-desc">
+        82 tópicos organizados em 12 trilhas — do Linux ao SRE. 
+        Marque o que já domina e acompanhe sua evolução.
+      </p>
+    </header>
+
+    <div class="sections-grid" id="sections-grid"></div>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
