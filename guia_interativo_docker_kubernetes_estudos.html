@@ -1,0 +1,356 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+.rw{
+  --bg: #0d0f14;
+  --surface: #13161e;
+  --surface2: #1a1e29;
+  --surface3: #21263a;
+  --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(255,255,255,0.14);
+  --txt: #e8eaf0;
+  --txt2: #7a8099;
+  --txt3: #4a5068;
+  --docker: #2496ED;
+  --docker-dim: #1a3a5c;
+  --k8s: #6674f4;
+  --k8s-dim: #1e2050;
+  --both: #1D9E75;
+  --both-dim: #0d3328;
+  --done: #4ade80;
+  --done-bg: #0d2a1a;
+  --progress: #fbbf24;
+  --progress-bg: #2a1f08;
+  --accent: #6674f4;
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--txt);
+  padding: 1.5rem 0;
+}
+
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap;}
+
+.brand{
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  letter-spacing:0.05em;color:var(--txt);
+}
+.brand span{color:var(--accent);}
+
+.pill{
+  display:flex;align-items:center;gap:6px;padding:5px 12px;
+  border-radius:999px;font-size:11px;font-weight:500;border:1px solid;
+  font-family:'Space Mono',monospace;letter-spacing:0.02em;
+}
+.pill-docker{background:rgba(36,150,237,0.12);color:#60b8f8;border-color:rgba(36,150,237,0.3);}
+.pill-k8s{background:rgba(102,116,244,0.12);color:#9aa5ff;border-color:rgba(102,116,244,0.3);}
+
+.prog-wrap{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.prog-label{font-size:11px;color:var(--txt2);font-family:'Space Mono',monospace;}
+.prog-track{width:80px;height:3px;background:var(--surface3);border-radius:2px;}
+.prog-fill{height:100%;background:var(--done);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
+.stat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.stat-n{font-size:24px;font-weight:600;font-family:'Space Mono',monospace;}
+.stat-n.s-done{color:var(--done);}
+.stat-n.s-prog{color:var(--progress);}
+.stat-n.s-todo{color:var(--txt2);}
+.stat-l{font-size:11px;color:var(--txt3);letter-spacing:0.04em;text-transform:uppercase;}
+
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;}
+.fbtn{
+  padding:5px 13px;border-radius:999px;font-size:12px;font-weight:500;
+  border:1px solid var(--border);background:transparent;color:var(--txt2);
+  cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;letter-spacing:0.01em;
+}
+.fbtn:hover{border-color:var(--border-hover);color:var(--txt);}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+.sec{margin-bottom:1.5rem;}
+
+.sec-hdr{
+  display:flex;align-items:center;gap:10px;margin-bottom:10px;
+  padding:8px 10px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--border);background:var(--surface);
+  transition:border-color .15s;user-select:none;
+}
+.sec-hdr:hover{border-color:var(--border-hover);}
+.sec-ico{
+  width:26px;height:26px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.sec-title{font-size:13px;font-weight:500;color:var(--txt);flex:1;letter-spacing:0.01em;}
+.sec-meta{font-size:11px;color:var(--txt3);font-family:'Space Mono',monospace;}
+.chevron{color:var(--txt3);font-size:15px;transition:transform .2s;}
+.sec.collapsed .chevron{transform:rotate(-90deg);}
+.sec-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px;margin-top:6px;}
+.sec.collapsed .sec-body{display:none;}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;cursor:pointer;
+  transition:all .15s;display:flex;align-items:flex-start;gap:10px;
+  position:relative;
+}
+.card:hover{border-color:var(--border-hover);background:var(--surface2);}
+.card.s-done{border-color:rgba(74,222,128,0.2);background:rgba(74,222,128,0.04);}
+.card.s-progress{border-color:rgba(251,191,36,0.2);background:rgba(251,191,36,0.04);}
+
+.circle{
+  width:18px;height:18px;border-radius:50%;border:1.5px solid;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;transition:all .15s;
+}
+.s-todo .circle{border-color:var(--txt3);background:transparent;}
+.s-progress .circle{border-color:var(--progress);background:rgba(251,191,36,0.15);color:var(--progress);}
+.s-done .circle{border-color:var(--done);background:rgba(74,222,128,0.15);color:var(--done);}
+.circle i{font-size:10px;}
+
+.cname{font-size:12px;font-weight:500;color:var(--txt);line-height:1.4;}
+.cdesc{font-size:11px;color:var(--txt2);margin-top:3px;line-height:1.4;}
+.ctag{
+  display:inline-block;font-size:10px;padding:2px 8px;border-radius:999px;
+  font-weight:500;margin-top:5px;font-family:'Space Mono',monospace;
+  letter-spacing:0.03em;
+}
+.tag-docker{background:rgba(36,150,237,0.15);color:#60b8f8;}
+.tag-k8s{background:rgba(102,116,244,0.15);color:#9aa5ff;}
+.tag-both{background:rgba(29,158,117,0.15);color:#34d399;}
+
+.sbadge{
+  position:absolute;top:8px;right:8px;
+  font-size:10px;padding:2px 7px;border-radius:999px;font-weight:500;
+  font-family:'Space Mono',monospace;
+}
+.sbadge-done{background:var(--done-bg);color:var(--done);}
+.sbadge-prog{background:var(--progress-bg);color:var(--progress);}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1.25rem;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2);}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+
+.rst{
+  margin-top:1.25rem;padding:6px 14px;border-radius:8px;font-size:11px;
+  border:1px solid var(--border);background:transparent;color:var(--txt2);
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.rst:hover{border-color:var(--border-hover);color:var(--txt);}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;">Roadmap interativo de estudos Docker e Kubernetes com tema escuro</h2>
+
+<div class="rw">
+  <div class="topbar">
+    <span class="brand">$ study <span>--path</span> devops</span>
+    <div class="pill pill-docker"><i class="ti ti-brand-docker" aria-hidden="true" style="font-size:13px"></i>Docker</div>
+    <div class="pill pill-k8s"><i class="ti ti-steering-wheel" aria-hidden="true" style="font-size:13px"></i>Kubernetes</div>
+    <div class="prog-wrap">
+      <span class="prog-label" id="plabel">0/0</span>
+      <div class="prog-track"><div class="prog-fill" id="pfill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n s-done" id="s-done">0</div><div class="stat-l">concluídos</div></div>
+    <div class="stat"><div class="stat-n s-prog" id="s-prog">0</div><div class="stat-l">estudando</div></div>
+    <div class="stat"><div class="stat-n s-todo" id="s-todo">0</div><div class="stat-l">pendentes</div></div>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#4a5068;border:1.5px solid #6a7090"></div>pendente</div>
+    <div class="leg-item"><div class="leg-dot" style="background:rgba(251,191,36,0.3);border:1.5px solid #fbbf24"></div>estudando</div>
+    <div class="leg-item"><div class="leg-dot" style="background:rgba(74,222,128,0.3);border:1.5px solid #4ade80"></div>concluído — clique para ciclar</div>
+  </div>
+
+  <div class="filters">
+    <button class="fbtn on" data-f="all">todos</button>
+    <button class="fbtn" data-f="docker">docker</button>
+    <button class="fbtn" data-f="k8s">kubernetes</button>
+    <button class="fbtn" data-f="todo">pendentes</button>
+    <button class="fbtn" data-f="progress">estudando</button>
+    <button class="fbtn" data-f="done">concluídos</button>
+  </div>
+
+  <div id="root"></div>
+
+  <button class="rst" id="rst"><i class="ti ti-refresh" aria-hidden="true" style="font-size:13px"></i>resetar progresso</button>
+</div>
+
+<script>
+const SECS=[
+  {id:"fund",title:"Fundamentos essenciais",ico:"ti-school",ibg:"rgba(29,158,117,0.2)",ic:"#34d399",topics:[
+    {id:"linux",name:"Linux básico",desc:"Comandos, permissões, processos, variáveis de ambiente",tag:"both"},
+    {id:"net",name:"Redes e protocolos",desc:"TCP/IP, DNS, portas, HTTP/S, load balancing",tag:"both"},
+    {id:"ctr",name:"O que são containers",desc:"Diferença entre VM e container, namespaces, cgroups",tag:"both"},
+    {id:"yaml",name:"YAML",desc:"Sintaxe, indentação, listas, mapeamentos aninhados",tag:"k8s"},
+  ]},
+  {id:"dcore",title:"Docker — núcleo",ico:"ti-brand-docker",ibg:"rgba(36,150,237,0.15)",ic:"#60b8f8",topics:[
+    {id:"dins",name:"Instalação e configuração",desc:"Docker Desktop, Docker Engine, docker daemon",tag:"docker"},
+    {id:"dfile",name:"Dockerfile",desc:"FROM, RUN, COPY, CMD, ENTRYPOINT, ARG, ENV, layers",tag:"docker"},
+    {id:"imgs",name:"Imagens",desc:"build, tag, push, pull, inspect, rmi, layer cache",tag:"docker"},
+    {id:"ctrs",name:"Containers",desc:"run, exec, logs, stop, rm, ps, inspect, lifecycle",tag:"docker"},
+    {id:"vols",name:"Volumes e bind mounts",desc:"Persistência de dados, tipos de volumes, tmpfs",tag:"docker"},
+    {id:"dnet",name:"Redes no Docker",desc:"bridge, host, none, overlay, comunicação entre containers",tag:"docker"},
+    {id:"envv",name:"Variáveis de ambiente",desc:"ENV, .env files, -e flag, segurança de secrets",tag:"docker"},
+    {id:"mstg",name:"Multi-stage builds",desc:"Reduzir tamanho de imagem, separar build de runtime",tag:"docker"},
+  ]},
+  {id:"comp",title:"Docker Compose",ico:"ti-stack-2",ibg:"rgba(102,116,244,0.15)",ic:"#9aa5ff",topics:[
+    {id:"cy",name:"docker-compose.yml",desc:"services, depends_on, ports, volumes, environment",tag:"docker"},
+    {id:"cc",name:"Comandos Compose",desc:"up, down, build, logs, exec, ps, scale, restart",tag:"docker"},
+    {id:"ca",name:"Compose avançado",desc:"profiles, override files, healthchecks, restart policies",tag:"docker"},
+    {id:"dev",name:"Dev com Compose",desc:"hot reload, watch mode, bancos de dados locais",tag:"docker"},
+  ]},
+  {id:"reg",title:"Registry e segurança de imagens",ico:"ti-package",ibg:"rgba(216,90,48,0.15)",ic:"#f0997b",topics:[
+    {id:"dhub",name:"Docker Hub",desc:"Push/pull, repositórios públicos e privados, automated builds",tag:"docker"},
+    {id:"preg",name:"Registry privado",desc:"ECR, GCR, ACR, Harbor, self-hosted registry",tag:"docker"},
+    {id:"isec",name:"Segurança de imagens",desc:"Scanning (Trivy, Snyk), usuário não-root, COPY vs ADD",tag:"docker"},
+    {id:"iopt",name:"Otimização de imagens",desc:"Alpine, distroless, .dockerignore, ordem das layers",tag:"docker"},
+  ]},
+  {id:"karch",title:"Kubernetes — arquitetura",ico:"ti-steering-wheel",ibg:"rgba(102,116,244,0.15)",ic:"#9aa5ff",topics:[
+    {id:"karch2",name:"Arquitetura do cluster",desc:"Control plane, worker nodes, etcd, API server, scheduler",tag:"k8s"},
+    {id:"kins",name:"Cluster local",desc:"minikube, kind, k3s, Docker Desktop K8s",tag:"k8s"},
+    {id:"kctl",name:"kubectl",desc:"get, describe, apply, delete, logs, exec, port-forward",tag:"k8s"},
+    {id:"ctx",name:"Contexts e kubeconfig",desc:"Gerenciar múltiplos clusters, namespaces",tag:"k8s"},
+  ]},
+  {id:"kwl",title:"Kubernetes — workloads",ico:"ti-boxes",ibg:"rgba(29,158,117,0.15)",ic:"#34d399",topics:[
+    {id:"pods",name:"Pods",desc:"Spec, lifecycle, init containers, sidecar pattern",tag:"k8s"},
+    {id:"dep",name:"Deployments",desc:"ReplicaSet, rolling update, rollback, estratégias",tag:"k8s"},
+    {id:"sts",name:"StatefulSets",desc:"Identidade estável, volumes persistentes, bancos de dados",tag:"k8s"},
+    {id:"ds",name:"DaemonSets",desc:"Um pod por node, logging agents, monitoring agents",tag:"k8s"},
+    {id:"jobs",name:"Jobs e CronJobs",desc:"Tarefas batch, agendamento, paralelismo",tag:"k8s"},
+    {id:"hpa",name:"HPA e VPA",desc:"Autoscaling horizontal e vertical com métricas",tag:"k8s"},
+  ]},
+  {id:"knet",title:"Kubernetes — rede e exposição",ico:"ti-network",ibg:"rgba(36,150,237,0.15)",ic:"#60b8f8",topics:[
+    {id:"svc",name:"Services",desc:"ClusterIP, NodePort, LoadBalancer, ExternalName",tag:"k8s"},
+    {id:"ing",name:"Ingress e Ingress Controller",desc:"Roteamento HTTP, TLS, Nginx / Traefik / ALB",tag:"k8s"},
+    {id:"dns",name:"DNS interno",desc:"CoreDNS, resolução de nomes entre services",tag:"k8s"},
+    {id:"np",name:"Network Policies",desc:"Isolamento de tráfego entre pods e namespaces",tag:"k8s"},
+  ]},
+  {id:"kcfg",title:"Kubernetes — configuração e storage",ico:"ti-settings-2",ibg:"rgba(251,191,36,0.12)",ic:"#fbbf24",topics:[
+    {id:"cm",name:"ConfigMaps",desc:"Configuração externalizada, montagem como arquivo ou env",tag:"k8s"},
+    {id:"sec",name:"Secrets",desc:"Tipos, base64, integração com Vault, IRSA",tag:"k8s"},
+    {id:"pv",name:"PV, PVC e StorageClass",desc:"Volumes persistentes, provisioning dinâmico",tag:"k8s"},
+    {id:"rl",name:"Requests e Limits",desc:"CPU, memória, QoS classes, LimitRange",tag:"k8s"},
+  ]},
+  {id:"kadv",title:"Kubernetes — avançado",ico:"ti-rocket",ibg:"rgba(212,83,126,0.15)",ic:"#ed93b1",topics:[
+    {id:"rbac",name:"RBAC",desc:"Roles, ClusterRoles, Bindings, ServiceAccounts",tag:"k8s"},
+    {id:"helm",name:"Helm",desc:"Charts, values, release, upgrade, rollback, repositórios",tag:"k8s"},
+    {id:"ops",name:"Operators e CRDs",desc:"Custom Resources, controllers, Operator SDK",tag:"k8s"},
+    {id:"prb",name:"Probes e lifecycle",desc:"liveness, readiness, startup, preStop hook",tag:"k8s"},
+    {id:"sch",name:"Scheduling avançado",desc:"nodeSelector, affinity, taints, tolerations, priority",tag:"k8s"},
+    {id:"sm",name:"Service Mesh",desc:"Istio / Linkerd, mutual TLS, traffic management",tag:"k8s"},
+  ]},
+  {id:"obs",title:"Observabilidade",ico:"ti-chart-dots",ibg:"rgba(29,158,117,0.15)",ic:"#34d399",topics:[
+    {id:"log",name:"Logging",desc:"docker logs, kubectl logs, EFK stack, Loki",tag:"both"},
+    {id:"met",name:"Métricas",desc:"Prometheus, Grafana, kube-state-metrics, node-exporter",tag:"both"},
+    {id:"trc",name:"Tracing distribuído",desc:"OpenTelemetry, Jaeger, Tempo",tag:"both"},
+    {id:"dbg",name:"Debugging",desc:"Events, describe, debug containers, ephemeral containers",tag:"k8s"},
+  ]},
+  {id:"cicd",title:"CI/CD e GitOps",ico:"ti-git-merge",ibg:"rgba(102,116,244,0.15)",ic:"#9aa5ff",topics:[
+    {id:"pipe",name:"Pipeline de build",desc:"GitHub Actions, GitLab CI, buildx, multi-arch images",tag:"both"},
+    {id:"gops",name:"GitOps",desc:"ArgoCD, FluxCD, app-of-apps, ApplicationSets",tag:"k8s"},
+    {id:"dstr",name:"Estratégias de deploy",desc:"Blue/green, canary, feature flags, Argo Rollouts",tag:"k8s"},
+  ]},
+];
+
+let st={}, filt="all";
+
+function load(){try{const s=localStorage.getItem("dk_dark_v1");if(s)st=JSON.parse(s);}catch(e){}}
+function save(){try{localStorage.setItem("dk_dark_v1",JSON.stringify(st));}catch(e){}}
+function next(s){if(!s||s==="todo")return "progress";if(s==="progress")return "done";return "todo";}
+
+function updStats(){
+  let done=0,prog=0,todo=0,total=0;
+  SECS.forEach(sec=>sec.topics.forEach(t=>{
+    total++;
+    const s=st[t.id]||"todo";
+    if(s==="done")done++;else if(s==="progress")prog++;else todo++;
+  }));
+  document.getElementById("s-done").textContent=done;
+  document.getElementById("s-prog").textContent=prog;
+  document.getElementById("s-todo").textContent=todo;
+  document.getElementById("plabel").textContent=done+"/"+total;
+  document.getElementById("pfill").style.width=total?Math.round(done/total*100)+"%":"0%";
+}
+
+function matches(t){
+  const s=st[t.id]||"todo";
+  if(filt==="all")return true;
+  if(filt==="docker")return t.tag==="docker"||t.tag==="both";
+  if(filt==="k8s")return t.tag==="k8s"||t.tag==="both";
+  return filt===s;
+}
+
+function cardHtml(t){
+  const s=st[t.id]||"todo";
+  const ico=s==="done"?"ti-check":s==="progress"?"ti-clock":"";
+  const badge=s==="done"?`<span class="sbadge sbadge-done">done</span>`:
+               s==="progress"?`<span class="sbadge sbadge-prog">estudando</span>`:"";
+  return `<div class="card s-${s}" data-id="${t.id}">
+    <div class="circle"><i class="ti ${ico}" aria-hidden="true"></i></div>
+    <div style="flex:1;min-width:0">
+      <div class="cname">${t.name}</div>
+      <div class="cdesc">${t.desc}</div>
+      <span class="ctag tag-${t.tag}">${t.tag==="both"?"ambos":t.tag}</span>
+    </div>${badge}
+  </div>`;
+}
+
+function render(){
+  const root=document.getElementById("root");
+  let html="";
+  SECS.forEach(sec=>{
+    const vis=sec.topics.filter(matches);
+    if(!vis.length)return;
+    const total=sec.topics.length;
+    const done=sec.topics.filter(t=>(st[t.id]||"todo")==="done").length;
+    html+=`<div class="sec" data-sec="${sec.id}">
+      <div class="sec-hdr">
+        <div class="sec-ico" style="background:${sec.ibg};color:${sec.ic}"><i class="ti ${sec.ico}" aria-hidden="true" style="font-size:14px"></i></div>
+        <span class="sec-title">${sec.title}</span>
+        <span class="sec-meta">${done}/${total}</span>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="sec-body">${vis.map(cardHtml).join("")}</div>
+    </div>`;
+  });
+  root.innerHTML=html;
+  attach();
+  updStats();
+}
+
+function attach(){
+  document.querySelectorAll(".card").forEach(c=>{
+    c.addEventListener("click",()=>{
+      const id=c.dataset.id;
+      st[id]=next(st[id]||"todo");
+      save();render();
+    });
+  });
+  document.querySelectorAll(".sec-hdr").forEach(h=>{
+    h.addEventListener("click",()=>h.closest(".sec").classList.toggle("collapsed"));
+  });
+}
+
+document.querySelectorAll(".fbtn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".fbtn").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");filt=b.dataset.f;render();
+  });
+});
+
+document.getElementById("rst").addEventListener("click",()=>{
+  if(confirm("Resetar progresso?")){{st={};save();render();}}
+});
+
+load();render();
+</script>
